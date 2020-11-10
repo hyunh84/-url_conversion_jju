@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no" />
+
+<title></title>
+<link rel="stylesheet" type="text/css" href="" />
+<script type="text/javascript" src="jquery-3.5.1.min.js" ></script>
+
+<style type="text/css">
+	* {margin:0;padding:0;list-style:none;}
+	button {cursor:pointer;}
+	#wrap {width:455px;margin:0 auto;padding:20px 0;}
+	.channel {position:relative;box-sizing:border-box;padding:0 0;}
+	.channel select {width:100%;height:34px;}
+	.date {position:relative;box-sizing:border-box;margin:20px 0 0;padding:0 0;}
+	.date input[type="text"] {box-sizing:border-box;width:100%;height:34px;padding:0 10px;border:1px solid #ccc;outline:none;}
+	.date + .transformBox {margin:30px auto 0;}
+
+	.transformBox {border:1px solid #000;}
+	.transformBox textarea {box-sizing:border-box;width:100%;height:200px;margin:0;padding:10px;text-align:left;border:none;resize:none;}
+
+	.confirm {margin:10px 0 0;}
+	.confirm button {box-sizing:border-box;width:100%;height:30px;border:1px solid #000;background-color:#fff;}
+	.resualt {overflow:auto;box-sizing:border-box;width:455px;margin:40px auto 0;padding:15px 10px;border:1px solid #333;background-color:#efefef;}
+</style>
+
+<script type="text/javascript">
+
+// textarea에 enter로 각각의 경로 구분함
+// 혹시 모를 공백이 들어갈수 있어서 공백은 무조건 제거한다
+// 경로에 공백이 들어가면 안됨
+var createResualt = function(iptName) {
+	var channel = $('.channel select').val();
+	var date = $('.date input[type="text"]').val();
+	// var fileName = iptName.split(/(?:\r\n|\r|\n)/g);
+	var fileName = iptName.replace(/(?:\r\n|\r|\n)/g, '');
+	fileName = fileName.split('.html');
+	// var fileName = iptName.split('.html');
+	var strFile = "";
+	// var fileName = iptName.replace(/(^\s*)|(\s*$)/g, '');
+
+	if(!date) {
+		alert('date 입력하세요');
+		return;
+	}
+
+	for(var i = 0; i < fileName.length; i++) {
+		var targetItem = fileName[i];
+		var removeBlank = targetItem !== '' && targetItem.replace(/(^\s*)|(\s*$)/g, '');
+		if(removeBlank !== '' && removeBlank) {
+			var splitFile = removeBlank.split('/');
+			splitFile = splitFile[splitFile.length - 1];
+			strFile += i === 0 ? splitFile : (", " + splitFile);
+		}
+	}
+
+	var createJSON = '{';
+	createJSON += 'channel : "' + channel + '", ';
+	createJSON += 'date : "' + date + '", ';
+	createJSON += 'fileStr : "' + strFile + '"';
+	createJSON += '}';
+
+	$('.resualt').append(createJSON);
+
+
+}
+
+$(document).on('click', '.confirm button',function() {
+	createResualt($('.transformBox textarea').val());
+});
+
+</script>
+</head>
+<body>
+<!-- wrap -->
+<div id="wrap">
+	<div class="channel">
+		<select>
+			<option value="homepage">homepage</option>
+			<option vaule="wm">wm</option>
+		</select>
+	</div>
+	<div class="date">
+		<input type="text" value="11/11" placeholder="00/00" />
+	</div>
+	<div class="transformBox">
+		<textarea>
+			/sample.html
+
+
+			/app/app03/sample02.html
+
+			/common/inc/gnb.html		
+			
+					/common/inc/sitemap-data.html		
+
+
+
+
+		</textarea>
+	</div>
+
+	<div class="confirm">
+		<button type="button"><span>확인</span></button>
+	</div>
+	
+	<div class="resualt"></div>
+
+<!-- 	
+app/app01/sample.html
+app/app02/sample.html
+app/app03/sample.html
+app/app04/sample.html
+app/app05/sample.html
+app/app06/sample.html
+app/app07/sample.html
+ -->
+
+</div>
+<!-- //wrap -->
+</body>
+</html>
